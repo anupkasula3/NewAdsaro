@@ -28,6 +28,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/context/context"
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -39,6 +41,8 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const auth = useAuth();
+  const route = useRouter();
 
   return (
     <SidebarMenu>
@@ -86,21 +90,35 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <UserCircleIcon />
-                Account
+                <div
+                        onClick={() => route.push("/publisher/profile")}
+                        className="text-gray-700 hover:bg-gray-100 rounded-md p-2 cursor-pointer"
+                      >
+   Account                      </div>
+             
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <CreditCardIcon />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <BellIcon />
                 Notifications
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOutIcon />
-              Log out
+            
+              <button
+              onClick={() => {
+                auth?.logout();
+              }}
+              className="flex items-center gap-2 text-gray-700 hover:bg-gray-100 rounded-md  w-full"
+            >
+              
+           <span>Logout</span>
+            </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -46,8 +46,6 @@ const data = {
       icon: LayoutDashboardIcon,
     },
 
-
-
     {
       title: "Reports",
       icon: ClipboardListIcon,

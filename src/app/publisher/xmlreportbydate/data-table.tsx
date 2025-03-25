@@ -114,67 +114,62 @@ export const columns: ColumnDef<BannerZoneData>[] = [
     enableHiding: false,
   },
   
+
   {
-    accessorKey: "id",
-    header: () => <div className="">Id</div>,
-    cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("id")}</div>
-    },
-  },
-  {
-    accessorKey: "name",
+    accessorKey: "date",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          date
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("date")}</div>,
   },
-  
-  
-  {
-    accessorKey: "placesize_id",
-    header: () => <div className="">Place Size</div>,
-    cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("placesize_id")}</div>
-    },
-  },
-  {
-    id: "actions",
-    header: () => <div className="">Action</div>,
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-8 h-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+  
+  {
+    accessorKey: "pub_pixel_impressions",
+    header: () => <div className="">Impressions</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium ">{row.getValue("pub_pixel_impressions")}</div>
     },
   },
+
+
+
+
+  {
+    accessorKey: "pub_clicks",
+    header: () => <div className=""> Clicks</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium ">{row.getValue("pub_clicks")}</div>
+    },
+  },
+
+  {
+    accessorKey: "revenue",
+    header: () => <div className=""> Revenue</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium ">No</div>
+    },
+  },
+
+  {
+    accessorKey: "pub_revenue",
+    header: () => <div className="">CPC ?</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium ">{row.getValue("pub_revenue")}</div>
+    },
+  },
+
+
+
+
 ]
 
 export function DataTableDemo() {
@@ -235,9 +230,9 @@ export function DataTableDemo() {
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("date")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("date")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

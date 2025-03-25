@@ -72,7 +72,7 @@ const data = {
       items: [
         {
           title: "Banner Zone",
-          url: "/publisher/zones",
+          url: "/publisher/bannerzones",
           icon: ListIcon,
 
         },
@@ -84,7 +84,7 @@ const data = {
         },
         {
           title: "Vast Zone",
-          url: "#",
+          url: "/publisher/vastzones",
           icon: ListIcon,
 
         },

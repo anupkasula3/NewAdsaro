@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
+import { useAuth } from "@/context/context";
 
 type UserData = {
   name: string;
@@ -29,6 +30,8 @@ type UserData = {
 
 const Page = () => {
   const [data, SetData] = useState<UserData>({} as UserData);
+  const auth = useAuth();
+  const mytoken = auth?.token;
 
   // const [hideNotifications, setHideNotifications] = useState(false);
   const {
@@ -48,13 +51,7 @@ const Page = () => {
     }));
   };
 
-  let storedToken = null;
-
-  if (typeof window !== "undefined" && typeof window.localStorage !== "undefined") {
-    storedToken = localStorage.getItem("session_token");
-  }
-
-  console.log("Session ssssssssstoken", storedToken);
+  
 
   const updateData = async () => {
     try {
@@ -64,7 +61,6 @@ const Page = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          storedToken: storedToken,
           data: {
             name: data.name,
             email: data.email,
@@ -80,6 +76,8 @@ const Page = () => {
             password_current: data?.password_current,
             password_repeat: data?.password_repeat,
             password: data?.password,
+          token: mytoken, 
+
           },
         }),
       });
@@ -94,13 +92,12 @@ const Page = () => {
     }
   };
 
-  console.log("Session ssssasdasdasdasdasdasdn", storedToken);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://panel.adsaro.com/publisher/api/Account?version=4&token=${storedToken}`
+          `https://panel.adsaro.com/publisher/api/Account?version=4&token=${mytoken}`
         );
         console.log(response.data);
         SetData(response.data.response.rows[0]);

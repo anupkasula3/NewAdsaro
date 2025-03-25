@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
 
 const Page = () => {
   const [data, SetData] = useState<any>({});
@@ -106,6 +109,10 @@ if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined')
   return (
     <>
 
+<SidebarProvider>
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
     
 <div className="flex h-screen  font-sans">
 
@@ -232,18 +239,7 @@ if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined')
                 </dd>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 sm:gap-6">
-                <dt className="text-sm font-medium text-gray-600">Login</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <input
-                    type="text"
-                    value={data?.login || ""}
-                    onChange={(e) => handleInputChange("login", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    readOnly
-                  />
-                </dd>
-              </div>
+            
 
               <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 sm:gap-6">
                 <dt className="text-sm font-medium text-gray-600">
@@ -436,6 +432,8 @@ if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined')
     
 
       </div>
+      </SidebarInset>
+    </SidebarProvider>
     </>
   );
 };

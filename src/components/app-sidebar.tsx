@@ -45,6 +45,31 @@ const data = {
       url: "dashboard",
       icon: LayoutDashboardIcon,
     },
+
+
+
+    {
+      title: "Report",
+      icon: ClipboardListIcon,
+      url: "#",
+      items: [
+        {
+          title: "Report A",
+          url: "#",
+          items: [
+            { title: "reportinsidea", url: "#" },
+            { title: "reportinsideb", url: "#" },
+          ],
+        },
+        {
+          title: "Report B",
+          url: "#",
+        },
+      ],
+    },
+
+
+
     {
       title: "Zone",
       url: "zones",

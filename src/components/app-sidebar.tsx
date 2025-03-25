@@ -42,12 +42,37 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "dashboard",
+      url: "publisher/dashboard",
       icon: LayoutDashboardIcon,
     },
+
+
+
+    {
+      title: "Report",
+      icon: ClipboardListIcon,
+      url: "#",
+      items: [
+        {
+          title: "Report A",
+          url: "#",
+          items: [
+            { title: "reportinsidea", url: "#" },
+            { title: "reportinsideb", url: "#" },
+          ],
+        },
+        {
+          title: "Report B",
+          url: "#",
+        },
+      ],
+    },
+
+
+
     {
       title: "Zone",
-      url: "zones",
+      url: "/publisher/zones",
       icon: ListIcon,
     },
     {

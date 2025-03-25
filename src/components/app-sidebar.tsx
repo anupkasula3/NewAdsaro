@@ -55,7 +55,7 @@ const data = {
       items: [
         {
           title: "XML Feed reports",
-          url: "#",
+          url: "/xmlreportbydate",
           items: [
             { title: "by Date", url: "#" },
             { title: "reportinsideb", url: "#" },

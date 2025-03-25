@@ -49,15 +49,15 @@ const data = {
 
 
     {
-      title: "Report",
+      title: "Reports",
       icon: ClipboardListIcon,
       url: "#",
       items: [
         {
-          title: "Report A",
+          title: "XML Feed reports",
           url: "#",
           items: [
-            { title: "reportinsidea", url: "#" },
+            { title: "by Date", url: "#" },
             { title: "reportinsideb", url: "#" },
           ],
         },

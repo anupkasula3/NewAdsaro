@@ -6,17 +6,21 @@ import { DataTableDemo } from "./data-table"
 
 
 // interface BannerZoneData {
-//   id: string;
-//   name: string;
-//   is_active: boolean;
-//   placesize_id: string;
+//   date: string
+//   pub_clicks: number
+//   pub_epc: number
+//   pub_revenue: number
+//   pub_gross: number
+//   pub_requests: number
+//   pub_ecpm: number
+//   pub_net_clicks: number
+//   pub_ctr: number
+//   pub_pixel_impressions: number
 // }
 
 
 export default async function Zone() {
-  
-
-  return (
+    return (
     <SidebarProvider>
       <AppSidebar variant="inset" />
       <SidebarInset>

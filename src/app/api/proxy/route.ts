@@ -60,6 +60,6 @@ export async function PUT(req: Request) {
         }
         return NextResponse.json(updatedData);
     } catch (error) {
-        return NextResponse.json({ error: "Failed to update data" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to update data"+error }, { status: 500 });
     }
 }

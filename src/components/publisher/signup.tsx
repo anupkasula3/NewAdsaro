@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 
 type FormData = {
@@ -46,7 +45,6 @@ export function PublisherSignup({
     handleSubmit,
     setError,
     setValue,
-    watch,
     getValues,
     formState: { errors },
   } = useForm<FormData>();

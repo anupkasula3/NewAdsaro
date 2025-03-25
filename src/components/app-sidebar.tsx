@@ -46,8 +46,6 @@ const data = {
       icon: LayoutDashboardIcon,
     },
 
-
-
     {
       title: "Reports",
       icon: ClipboardListIcon,
@@ -55,9 +53,9 @@ const data = {
       items: [
         {
           title: "XML Feed reports",
-          url: "#",
+          url: "३",
           items: [
-            { title: "by Date", url: "#" },
+            { title: "by Date", url: "/xmlreportbydate" },
             { title: "reportinsideb", url: "#" },
           ],
         },
@@ -67,14 +65,34 @@ const data = {
         },
       ],
     },
-
-
-
     {
-      title: "Zone",
-      url: "/publisher/zones",
+      title: "Zones",
       icon: ListIcon,
+      url: "#",
+      items: [
+        {
+          title: "Banner Zone",
+          url: "/publisher/zones",
+          icon: ListIcon,
+
+        },
+        {
+          title: "Pop Zone",
+          url: "#",
+          icon: ListIcon,
+
+        },
+        {
+          title: "Vast Zone",
+          url: "#",
+          icon: ListIcon,
+
+        },
+      ],
     },
+
+
+
     {
       title: "Analytics",
       url: "#",
@@ -91,88 +109,21 @@ const data = {
       icon: UsersIcon,
     },
   ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: CameraIcon,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: FileTextIcon,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: FileCodeIcon,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
+  
   navSecondary: [
     {
       title: "Settings",
       url: "#",
       icon: SettingsIcon,
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: HelpCircleIcon,
-    },
+    
     {
       title: "Search",
       url: "#",
       icon: SearchIcon,
     },
   ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: DatabaseIcon,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: ClipboardListIcon,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: FileIcon,
-    },
-  ],
+  
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -195,7 +146,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

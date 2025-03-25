@@ -1,6 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import logo from "../../../public/logo.png";
+
 import {
   Card,
   CardContent,
@@ -21,6 +23,7 @@ import {
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 type FormData = {
   login: string;
@@ -138,8 +141,11 @@ export function PublisherSignup({
     <div className={cn("", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
-          <CardDescription>Create your account</CardDescription>
+        <div className="flex justify-center mx-auto ">
+            <Image alt="logo" width={200} src={logo} />
+          </div>
+          <CardTitle className="text-2xl text-center text-gray-500">Create your account</CardTitle>
+          
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>

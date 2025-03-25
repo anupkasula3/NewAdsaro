@@ -36,6 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import axios from "axios"
+import { useAuth } from "@/context/context"
 
 // const data: Payment[] = [
 //   {
@@ -173,6 +174,11 @@ export const columns: ColumnDef<BannerZoneData>[] = [
 
 export function DataTableDemo() {
   const [sorting, setSorting] = React.useState<SortingState>([])
+  const auth = useAuth();
+  const mytoken = auth?.token;
+ 
+
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
@@ -205,7 +211,7 @@ export function DataTableDemo() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://panel.adsaro.com/publisher/api/CpmZones/?version=4&token=u2Jrx1QXb44yz6b3WADqQqwG9PBozjl4.u2&range=0-10`
+          `https://panel.adsaro.com/publisher/api/CpmZones/?version=4&token=${mytoken}`
         );
         const rowsArray = Object.values(response.data.response?.rows || {}) as BannerZoneData[];
         setData(rowsArray);
@@ -215,14 +221,18 @@ export function DataTableDemo() {
       }
     };
 
-    fetchData();
-    // if (mytoken) {
-    //   fetchData();
-    // }
-  }, []);
+    // fetchData();
+    if (mytoken) {
+      fetchData();
+    }
+  }, [mytoken]);
 
   return (
-    <div className="w-full">
+    <div className="w-full p-5">
+      <div className="text-xl font-bold text-purple-600">
+      Vast Zone
+
+      </div>
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."

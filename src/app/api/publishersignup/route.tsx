@@ -18,6 +18,6 @@ export async function POST(req: Request) {
         console.log("donedata",data)
         return NextResponse.json(data);
     } catch (error) {
-        return NextResponse.json({ error: "Failed to fetch datas"}, { status: 500 });
+        return NextResponse.json({ error: "Failed to fetch datas"+error}, { status: 500 });
     }
 }

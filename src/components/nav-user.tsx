@@ -1,8 +1,7 @@
 "use client"
 
 import {
-  BellIcon,
-  CreditCardIcon,
+
   LogOutIcon,
   MoreVerticalIcon,
   UserCircleIcon,
@@ -53,13 +52,13 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+              <Avatar className="w-8 h-8 rounded-lg grayscale">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs text-muted-foreground">
+              <div className="grid flex-1 text-sm leading-tight text-left">
+                <span className="font-medium truncate">{user.name}</span>
+                <span className="text-xs truncate text-muted-foreground">
                   {user.email}
                 </span>
               </div>
@@ -74,13 +73,13 @@ export function NavUser({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="w-8 h-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs text-muted-foreground">
+                <div className="grid flex-1 text-sm leading-tight text-left">
+                  <span className="font-medium truncate">{user.name}</span>
+                  <span className="text-xs truncate text-muted-foreground">
                     {user.email}
                   </span>
                 </div>
@@ -92,7 +91,7 @@ export function NavUser({
                 <UserCircleIcon />
                 <div
                         onClick={() => route.push("/publisher/profile")}
-                        className="text-gray-700 hover:bg-gray-100 rounded-md p-2 cursor-pointer"
+                        className="p-2 text-gray-700 rounded-md cursor-pointer hover:bg-gray-100"
                       >
    Account                      </div>
              
@@ -114,7 +113,7 @@ export function NavUser({
               onClick={() => {
                 auth?.logout();
               }}
-              className="flex items-center gap-2 text-gray-700 hover:bg-gray-100 rounded-md  w-full"
+              className="flex items-center w-full gap-2 text-gray-700 rounded-md hover:bg-gray-100"
             >
               
            <span>Logout</span>

@@ -71,6 +71,7 @@ import axios from "axios"
 // ]
 
 interface BannerZoneData {
+  id: string
   date: string
   pub_clicks: number
   pub_epc: number

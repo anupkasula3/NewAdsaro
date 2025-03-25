@@ -55,8 +55,8 @@ const data = {
           title: "XML Feed reports",
           url: "३",
           items: [
-            { title: "by Date", url: "/xmlreportbydate" },
-            { title: "reportinsideb", url: "#" },
+            { title: "by Date", url: "/publisher/xmlreportbydate" },
+            { title: "by country", url: "/publisher/xmlreportbycountry" },
           ],
         },
         {

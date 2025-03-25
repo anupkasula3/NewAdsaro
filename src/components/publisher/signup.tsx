@@ -21,6 +21,7 @@ import {
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type FormData = {
   login: string;
@@ -46,38 +47,13 @@ export function PublisherSignup({
     setError,
     setValue,
     watch,
+    getValues,
     formState: { errors },
   } = useForm<FormData>();
 
   const [country, setCountry] = useState("");
-
+  const router = useRouter();
   const onSubmit = async (data: FormData) => {
-    const abc = {
-      login: data.login,
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-      password_repeat: data.password_repeat,
-      website: data.website,
-      website_descr: data.websiteDescription,
-      skype_id: data.skype_id,
-      phone: data.phone,
-      address_country: data.country,
-      status: "NEW",
-    };
-    
-
-    const publisherpost = axios.post(
-      "https://panel.adsaro.com/admin/api/Publisher/?version=4&userToken=1wDtEkEz2ykyOdyx",
-      abc,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    console.log("publisherpost",publisherpost)
-
     if (data.password !== data.password_repeat) {
       setError("password_repeat", {
         type: "manual",
@@ -93,8 +69,71 @@ export function PublisherSignup({
       });
       return;
     }
-    data.country = country;
-    console.log(data);
+
+    const abc = {
+      login: data.login,
+      name: data.fullName,
+      email: data.email,
+      password: data.password,
+      password_repeat: data.password_repeat,
+      website: data.website,
+      website_descr: data.websiteDescription,
+      skype_id: data.skype_id,
+      phone: data.phone,
+      address_country: data.country,
+      status: "NEW",
+    };
+
+    try {
+      const response = await fetch("/api/publishersignup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: abc,
+        }),
+      });
+      const result = await response.json();
+
+      console.log("aabiresult", result);
+      if (result?.status == "Error") {
+        console.log("object", result?.message);
+
+        if (
+          result?.message ==
+          "Validation error: login=Duplicate entry is caused by this field value"
+        ) {
+          setError("login", {
+            type: "custom",
+            message: "Username Already Exists",
+          });
+        }
+        if (
+          result?.message ==
+          "Validation error: email=Duplicate entry is caused by this field value"
+        ) {
+          setError("email", {
+            type: "custom",
+            message: "Email Already Exists",
+          });
+        }
+        if (
+          result?.message ==
+          "Validation error: website=Must be a well-formed domain name"
+        ) {
+          setError("website", {
+            type: "custom",
+            message: "Website Must be a well-formed domain name",
+          });
+        }
+      }
+      if (result?.status == "OK") {
+        router.push("/publisher/login");
+      }
+    } catch (err) {
+      console.error("Error updating data", err);
+    }
   };
 
   return (
@@ -180,6 +219,16 @@ export function PublisherSignup({
                     type="password"
                     {...register("password", {
                       required: "Password is required",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters long",
+                      },
+                      pattern: {
+                        value:
+                          /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
+                        message:
+                          "Password must include one uppercase letter and one special character",
+                      },
                     })}
                   />
                   {errors.password && (
@@ -195,6 +244,9 @@ export function PublisherSignup({
                     type="password"
                     {...register("password_repeat", {
                       required: "Please confirm password",
+                      validate: (value) =>
+                        value === getValues("password") ||
+                        "Passwords do not match",
                     })}
                   />
                   {errors.password_repeat && (
@@ -214,6 +266,11 @@ export function PublisherSignup({
                     placeholder="https://yourwebsite.com"
                     {...register("website")}
                   />
+                  {errors.website && (
+                    <p className="text-sm text-red-500">
+                      {errors.website.message}
+                    </p>
+                  )}
                 </div>
                 <div className="grid w-1/2 gap-2">
                   <Label htmlFor="websiteDescription">
@@ -224,6 +281,11 @@ export function PublisherSignup({
                     placeholder="Brief description"
                     {...register("websiteDescription")}
                   />
+                  {errors.websiteDescription && (
+                    <p className="text-sm text-red-500">
+                      {errors.websiteDescription.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -236,6 +298,11 @@ export function PublisherSignup({
                     placeholder="Skype ID"
                     {...register("skype_id")}
                   />
+                  {errors.skype_id && (
+                    <p className="text-sm text-red-500">
+                      {errors.skype_id.message}
+                    </p>
+                  )}
                 </div>
                 <div className="grid w-1/2 gap-2">
                   <Label htmlFor="country">Country</Label>
@@ -272,9 +339,12 @@ export function PublisherSignup({
             </div>
             <div className="mt-4 text-sm text-center">
               Already have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
+              <div
+                onClick={() => router.push("/publisher/login")}
+                className="underline cursor-pointer underline-offset-4"
+              >
                 Log in
-              </a>
+              </div>
             </div>
           </form>
         </CardContent>

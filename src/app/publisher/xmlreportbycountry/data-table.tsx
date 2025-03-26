@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import axios from "axios"
+import { useAuth } from "@/context/context"
 
 // const data: Payment[] = [
 //   {
@@ -178,7 +179,11 @@ export function DataTableDemo() {
     []
   )
   const [data, setData] = React.useState<BannerZoneData[]>([]);
-
+  const [fromDate, setFromDate] = React.useState("");
+  const [toDate, setToDate] = React.useState("");
+  
+  const auth = useAuth();
+const mytoken = auth?.token;
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -202,37 +207,97 @@ export function DataTableDemo() {
     },
   })
 
+
+
+
+
+  const fetchData = async () => {
+    if (!fromDate || !toDate || !mytoken) {
+      console.log("Missing input");
+      return;
+    }
+
+    try {
+      const url = `https://panel.adsaro.com/publisher/api/FeedReports/date?version=4&token=${mytoken}&filters=date:${fromDate}_${toDate}`;
+      console.log("Fetching:", url);
+
+      const response = await axios.get(url);
+      const rowsArray = Object.values(response.data.response.list.rows || {});
+      setData(rowsArray);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  // Optional: Run automatically when fromDate, toDate, and token are all set
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `https://panel.adsaro.com/publisher/api/FeedReports/date?version=4&token=u2lVtYYPVMQOTAZWXWQuMnfNmDtwRyAi.u2&4mxm&filters=date:2025-03-01_2025-03-31&range=0-10`
-        );
+    if (mytoken && fromDate && toDate) {
+      fetchData();
+    }
+  }, [mytoken, fromDate, toDate]);
 
-
-        console.log(response.data.response.list.rows,"alldata");
-        const rowsArray = Object.values(response.data.response.list.rows || {}) as BannerZoneData[];
-        setData(rowsArray);
-       
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-    // if (mytoken) {
-    //   fetchData();
-    // }
-  }, []);
 
   return (
+
+    
     <div className="w-full">
+
+
+
+
+
+<div className=" p-6 bg-white rounded-lg shadow-md mt-10">
+      <h2 className="text-xl font-bold mb-4 text-gray-700">Filter Report by Country</h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">From Date</label>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">To Date</label>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        <div className="flex items-end">
+          <button
+            onClick={fetchData}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+          >
+            Fetch Data
+          </button>
+        </div>
+      </div>
+
+    
+    </div>
+
+
+
+
+
+
+
+
+
+
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."
-          value={(table.getColumn("date")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("pub_pixel_impressions")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("date")?.setFilterValue(event.target.value)
+            table.getColumn("pub_pixel_impressions")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

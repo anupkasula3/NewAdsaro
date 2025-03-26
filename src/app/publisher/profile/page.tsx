@@ -8,21 +8,35 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { useAuth } from "@/context/context";
 
+type FormData = {
+  name?: string;
+  email?: string;
+  website?: string;
+  website_descr?: string;
+  company?: string;
+  phone?: string;
+  skype_id?: string;
+  address_state?: string;
+  address_city?: string;
+  address_zip?: string;
+  address_street?: string;
+  password_current?: string;
+  password?: string;
+  password_repeat?: string;
+  password_stats?: string;
+  login?: string;
+  address_country?: string;
+};
+
 const Page = () => {
-  const [data, SetData] = useState<any>({});
-  const [hideNotifications, setHideNotifications] = useState(false);
+  const [data, SetData] = useState<FormData>({});
   const {
-    register,
-    handleSubmit,
-    setError,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormData>();
 
   const auth = useAuth();
 const mytoken = auth?.token;
-  const toggleSwitch = () => {
-    setHideNotifications((prev) => !prev);
-  };
+  
   // Function to handle input changes
   const handleInputChange = (field: string, value: string) => {
     SetData((prevData) => ({
@@ -95,14 +109,13 @@ const mytoken = auth?.token;
         );
         console.log(response.data);
         SetData(response.data.response.rows[0]);
-        const userData = response.data.response.rows[0];
-        setHideNotifications(userData.hide_notifications);
+        // const userData = response.data.response.rows[0];
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, []);
+  }, [mytoken]);
 
   return (
     <>
@@ -112,19 +125,19 @@ const mytoken = auth?.token;
       <SidebarInset>
         <SiteHeader />
     
-<div className="flex h-screen  font-sans">
+<div className="flex h-screen font-sans">
 
-<div className="flex-1 flex flex-col overflow-hidden">
+<div className="flex flex-col flex-1 overflow-hidden">
 
-  <div className="flex-1 overflow-y-auto p-4">
-        <div className="bg-white shadow-xl rounded-lg border border-gray-300 overflow-hidden my-5">
+  <div className="flex-1 p-4 overflow-y-auto">
+        <div className="my-5 overflow-hidden bg-white border border-gray-300 rounded-lg shadow-xl">
           <div className="px-6 py-5 sm:px-6">
             <h3 className="text-3xl font-semibold text-gray-800">Main Info</h3>
             <p className="mt-2 text-lg text-gray-600">
               Detailed information about {data?.name}.
             </p>
           </div>
-          <div className="border-t border-gray-200 px-6 py-5 sm:p-6">
+          <div className="px-6 py-5 border-t border-gray-200 sm:p-6">
             <dl className="space-y-6 sm:space-y-5">
               {/* Full Name */}
               <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 sm:gap-6">
@@ -134,9 +147,9 @@ const mytoken = auth?.token;
                     type="text"
                     value={data?.name || ""}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                      {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}  
+                      {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}  
 
                 </dd>
               </div>
@@ -151,7 +164,7 @@ const mytoken = auth?.token;
                     type="email"
                     value={data?.email || ""}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -165,7 +178,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("website", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -178,7 +191,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("website_descr", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -192,7 +205,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("company", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -204,7 +217,7 @@ const mytoken = auth?.token;
                     type="text"
                     value={data?.login || ""}
                    disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -218,7 +231,7 @@ const mytoken = auth?.token;
                     type="text"
                     value={data?.phone || ""}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -232,7 +245,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("address_country", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -250,7 +263,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("password_current", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -266,7 +279,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("password", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -282,7 +295,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("password_repeat", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -298,7 +311,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("skype_id", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -314,7 +327,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("address_state", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -331,7 +344,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("address_city", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -350,7 +363,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("address_zip", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -367,7 +380,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("address_street", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -384,7 +397,7 @@ const mytoken = auth?.token;
                     onChange={(e) =>
                       handleInputChange("password_stats", e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </dd>
               </div>
@@ -418,7 +431,7 @@ const mytoken = auth?.token;
           <div className="px-6 py-4 sm:px-6">
             <button
               onClick={updateData}
-              className="flex justify-center mx-auto items-center px-6 py-3 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex items-center justify-center px-6 py-3 mx-auto font-semibold text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               Save
             </button>

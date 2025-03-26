@@ -35,38 +35,7 @@ import {
 import axios from "axios"
 import { useAuth } from "@/context/context"
 
-// const data: Payment[] = [
-//   {
-//     id: "m5gr84i9",
-//     amount: 316,
-//     status: "success",
-//     email: "ken99@example.com",
-//   },
-//   {
-//     id: "3u1reuv4",
-//     amount: 242,
-//     status: "success",
-//     email: "Abe45@example.com",
-//   },
-//   {
-//     id: "derv1ws0",
-//     amount: 837,
-//     status: "processing",
-//     email: "Monserrat44@example.com",
-//   },
-//   {
-//     id: "5kma53ae",
-//     amount: 874,
-//     status: "success",
-//     email: "Silas22@example.com",
-//   },
-//   {
-//     id: "bhqecj4p",
-//     amount: 721,
-//     status: "failed",
-//     email: "carmella@example.com",
-//   },
-// ]
+
 
 interface BannerZoneData {
   country: string
@@ -76,12 +45,7 @@ interface BannerZoneData {
   pub_clicks: number
 }
 
-// export type Payment = {
-//   id: string
-//   amount: number
-//   status: "pending" | "processing" | "success" | "failed"
-//   email: string
-// }
+
 
 export const columns: ColumnDef<BannerZoneData>[] = [
   {
@@ -222,7 +186,8 @@ const mytoken = auth?.token;
       console.log("Fetching:", url);
 
       const response = await axios.get(url);
-      const rowsArray = Object.values(response.data.response.list.rows || {});
+      const rowsArray = Object.values(response.data.response.list.rows || {}) as BannerZoneData[];
+
       setData(rowsArray);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -230,7 +195,7 @@ const mytoken = auth?.token;
   };
 
   // Optional: Run automatically when fromDate, toDate, and token are all set
-  React.useEffect(() => {
+React.useEffect(() => {
     if (mytoken && fromDate && toDate) {
       fetchData();
     }
@@ -246,12 +211,12 @@ const mytoken = auth?.token;
 
 
 
-<div className=" p-6 bg-white rounded-lg shadow-md mt-10">
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Filter Report by Country</h2>
+<div className="p-6 mt-10 bg-white rounded-lg shadow-md ">
+      <h2 className="mb-4 text-xl font-bold text-gray-700">Filter Report by Country</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">From Date</label>
+          <label className="block mb-1 text-sm font-medium text-gray-600">From Date</label>
           <input
             type="date"
             value={fromDate}
@@ -261,7 +226,7 @@ const mytoken = auth?.token;
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">To Date</label>
+          <label className="block mb-1 text-sm font-medium text-gray-600">To Date</label>
           <input
             type="date"
             value={toDate}
@@ -273,7 +238,7 @@ const mytoken = auth?.token;
         <div className="flex items-end">
           <button
             onClick={fetchData}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+            className="w-full px-4 py-2 text-white transition bg-blue-600 rounded-md hover:bg-blue-700"
           >
             Fetch Data
           </button>

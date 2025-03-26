@@ -19,6 +19,8 @@ import {
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
+import logo from "../../public/logo.png"; // Direct path from public folder
+
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +30,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import Image from "next/image"
 
 const data = {
   user: {
@@ -59,8 +62,8 @@ const data = {
           title: "Display Zone reports",
           url: "#",
           items: [
-            { title: "by Date", url: "/publisher/xmlreportbydate" },
-            { title: "by country", url: "/publisher/xmlreportbycountry" },
+            { title: "by Date", url: "/publisher/zonereportbydate" },
+            { title: "by country", url: "/publisher/zonereportbycountry" },
           ],
         },
       ],
@@ -113,15 +116,10 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/publisher/profile",      
       icon: SettingsIcon,
     },
     
-    {
-      title: "Search",
-      url: "#",
-      icon: SearchIcon,
-    },
   ],
   
 }
@@ -136,9 +134,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
-                <ArrowUpCircleIcon className="w-5 h-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+              <a className="h-14" href="#">
+       
+                  
+                              <Image alt="logo" width={150} src={logo} />
+              
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -49,15 +49,19 @@ const data = {
       items: [
         {
           title: "XML Feed reports",
-          url: "३",
+          url: "#",
           items: [
             { title: "by Date", url: "/publisher/xmlreportbydate" },
             { title: "by country", url: "/publisher/xmlreportbycountry" },
           ],
         },
         {
-          title: "Report B",
+          title: "Display Zone reports",
           url: "#",
+          items: [
+            { title: "by Date", url: "/publisher/xmlreportbydate" },
+            { title: "by country", url: "/publisher/xmlreportbycountry" },
+          ],
         },
       ],
     },

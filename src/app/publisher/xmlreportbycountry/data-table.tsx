@@ -33,39 +33,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import axios from "axios"
+import { useAuth } from "@/context/context"
 
-// const data: Payment[] = [
-//   {
-//     id: "m5gr84i9",
-//     amount: 316,
-//     status: "success",
-//     email: "ken99@example.com",
-//   },
-//   {
-//     id: "3u1reuv4",
-//     amount: 242,
-//     status: "success",
-//     email: "Abe45@example.com",
-//   },
-//   {
-//     id: "derv1ws0",
-//     amount: 837,
-//     status: "processing",
-//     email: "Monserrat44@example.com",
-//   },
-//   {
-//     id: "5kma53ae",
-//     amount: 874,
-//     status: "success",
-//     email: "Silas22@example.com",
-//   },
-//   {
-//     id: "bhqecj4p",
-//     amount: 721,
-//     status: "failed",
-//     email: "carmella@example.com",
-//   },
-// ]
+
 
 interface BannerZoneData {
   country: string
@@ -75,12 +45,7 @@ interface BannerZoneData {
   pub_clicks: number
 }
 
-// export type Payment = {
-//   id: string
-//   amount: number
-//   status: "pending" | "processing" | "success" | "failed"
-//   email: string
-// }
+
 
 export const columns: ColumnDef<BannerZoneData>[] = [
   {
@@ -178,7 +143,11 @@ export function DataTableDemo() {
     []
   )
   const [data, setData] = React.useState<BannerZoneData[]>([]);
-
+  const [fromDate, setFromDate] = React.useState("");
+  const [toDate, setToDate] = React.useState("");
+  
+  const auth = useAuth();
+const mytoken = auth?.token;
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -202,37 +171,98 @@ export function DataTableDemo() {
     },
   })
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `https://panel.adsaro.com/publisher/api/FeedReports/date?version=4&token=u2lVtYYPVMQOTAZWXWQuMnfNmDtwRyAi.u2&4mxm&filters=date:2025-03-01_2025-03-31&range=0-10`
-        );
 
 
-        console.log(response.data.response.list.rows,"alldata");
-        const rowsArray = Object.values(response.data.response.list.rows || {}) as BannerZoneData[];
-        setData(rowsArray);
-       
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
 
-    fetchData();
-    // if (mytoken) {
-    //   fetchData();
-    // }
-  }, []);
+
+  const fetchData = async () => {
+    if (!fromDate || !toDate || !mytoken) {
+      console.log("Missing input");
+      return;
+    }
+
+    try {
+      const url = `https://panel.adsaro.com/publisher/api/FeedReports/date?version=4&token=${mytoken}&filters=date:${fromDate}_${toDate}`;
+      console.log("Fetching:", url);
+
+      const response = await axios.get(url);
+      const rowsArray = Object.values(response.data.response.list.rows || {}) as BannerZoneData[];
+
+      setData(rowsArray);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  // Optional: Run automatically when fromDate, toDate, and token are all set
+React.useEffect(() => {
+    if (mytoken && fromDate && toDate) {
+      fetchData();
+    }
+  }, [mytoken, fromDate, toDate]);
+
 
   return (
+
+    
     <div className="w-full">
+
+
+
+
+
+<div className="p-6 mt-10 bg-white rounded-lg shadow-md ">
+      <h2 className="mb-4 text-xl font-bold text-gray-700">Filter Report by Country</h2>
+
+      <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-600">From Date</label>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-600">To Date</label>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        <div className="flex items-end">
+          <button
+            onClick={fetchData}
+            className="w-full px-4 py-2 text-white transition bg-blue-600 rounded-md hover:bg-blue-700"
+          >
+            Fetch Data
+          </button>
+        </div>
+      </div>
+
+    
+    </div>
+
+
+
+
+
+
+
+
+
+
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."
-          value={(table.getColumn("date")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("pub_pixel_impressions")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("date")?.setFilterValue(event.target.value)
+            table.getColumn("pub_pixel_impressions")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

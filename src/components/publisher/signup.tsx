@@ -166,7 +166,7 @@ export function PublisherSignup({
         router.push("/publisher/login");
       }
     } catch (err) {
-      console.error("Error updating data", err);
+      console.error("Error Signup data", err);
     }
   };
 

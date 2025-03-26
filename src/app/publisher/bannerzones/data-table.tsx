@@ -37,7 +37,10 @@ import {
 } from "@/components/ui/table"
 import axios from "axios"
 import { useAuth } from "@/context/context"
-
+import AddBannerZone from "./AddBannerZone/page"
+interface AddBannerZoneProps {
+  fetchData: () => void;
+}
 // const data: Payment[] = [
 //   {
 //     id: "m5gr84i9",
@@ -70,6 +73,11 @@ import { useAuth } from "@/context/context"
 //     email: "carmella@example.com",
 //   },
 // ]
+interface BannerSize {
+  id: number;
+  width: number;
+  height: number;
+}
 
 interface BannerZoneData {
   id: string;
@@ -85,108 +93,117 @@ interface BannerZoneData {
 //   email: string
 // }
 
-export const columns: ColumnDef<BannerZoneData>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  
-  {
-    accessorKey: "id",
-    header: () => <div className="">Id</div>,
-    cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("id")}</div>
-    },
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
-  },
-  
-  
-  {
-    accessorKey: "placesize_id",
-    header: () => <div className="">Place Size</div>,
-    cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("placesize_id")}</div>
-    },
-  },
-  {
-    id: "actions",
-    header: () => <div className="">Action</div>,
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-8 h-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
 
 export function DataTableDemo() {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const auth = useAuth();
   const mytoken = auth?.token;
- 
-
-
+ const [bannerList, setBannerList] = React.useState<BannerSize[]>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
+  
   const [data, setData] = React.useState<BannerZoneData[]>([]);
 
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+
+
+  const columns: ColumnDef<BannerZoneData>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    
+    {
+      accessorKey: "id",
+      header: () => <div className="">Id</div>,
+      cell: ({ row }) => {
+        return <div className="font-medium ">{row.getValue("id")}</div>
+      },
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Name
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+    },
+    
+    
+    {
+      accessorKey: "placesize_id",
+      header: () => <div className="">Place Size</div>,
+      cell: ({ row }) => {
+        const placeSize = bannerList.find(item => item.id === row.getValue("placesize_id"));
+        return (
+          <div className="font-medium">
+            {placeSize ? placeSize.width : row.getValue("placesize_id")}*{placeSize ? placeSize.height : row.getValue("placesize_id")}
+          </div>
+        );
+      },
+    },
+    
+    {
+      id: "actions",
+      header: () => <div className="">Action</div>,
+      enableHiding: false,
+      cell: ({ row }) => {
+        const payment = row.original
+  
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="w-8 h-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(payment.id)}
+              >
+                Copy payment ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View customer</DropdownMenuItem>
+              <DropdownMenuItem>View payment details</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ]
+  
 
   const table = useReactTable({
     data,
@@ -206,31 +223,46 @@ export function DataTableDemo() {
       rowSelection,
     },
   })
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `https://panel.adsaro.com/publisher/api/CpmZones/?version=4&token=${mytoken}`
+      );
+      const rowsArray = Object.values(response.data.response?.rows || {}) as BannerZoneData[];
+      setData(rowsArray);
+     
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `https://panel.adsaro.com/publisher/api/CpmZones/?version=4&token=${mytoken}`
-        );
-        const rowsArray = Object.values(response.data.response?.rows || {}) as BannerZoneData[];
-        setData(rowsArray);
-       
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const loadBannerSize = async () => {
+    try {
+      const url = `https://panel.adsaro.com/admin/api/CpmBannerSize/?version=4&userToken=1wDtEkEz2ykyOdyx`;
+      const response = await axios.get(url);
+      const rows = response.data?.response?.rows;
+
+      if (rows && typeof rows === "object") {
+        const bannerArray = Object.values(rows) as BannerSize[];
+        setBannerList(bannerArray);
+      } else {
+        console.warn("Invalid data format:", rows);
       }
-    };
-
-    // fetchData();
+    } catch (error) {
+      console.error("Failed to load Banner:", error);
+    }
+  };
+  React.useEffect(() => {
     if (mytoken) {
       fetchData();
     }
-  }, [mytoken]);
+    loadBannerSize(); 
+  }, [mytoken,auth.publisherData]);
 
   return (
     <div className="w-full p-5">
       <div className="text-xl font-bold text-purple-600">
-      Vast Zone
+      Banner Zone
 
       </div>
       <div className="flex items-center py-4">
@@ -242,6 +274,7 @@ export function DataTableDemo() {
           }
           className="max-w-sm"
         />
+           <AddBannerZone fetchData={fetchData} bannerList={bannerList}/>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -13,6 +14,7 @@ interface AppContext {
   isLogin: boolean;
   token: string | undefined;
   accountType: string | undefined;
+  publisherData: any; 
   initializing: boolean;
   login: (token: string, accountType: string) => void;
   logout: () => void;
@@ -29,11 +31,23 @@ export const AuthProvider = ({ children }: Props) => {
   const [isLogin, setIsLogin] = useState(false);
   const [token, setToken] = useState<string | undefined>();
   const [accountType, setAccountType] = useState<string | undefined>();
+  const [publisherData, setPublisherData] = useState<any>(null); // Start with null to indicate no data yet
   const [initializing, setInitializing] = useState(true);
+
+  const fetchData = async (mytoken: string) => {
+    try {
+      const response = await axios.get(
+        `https://panel.adsaro.com/publisher/api/Account?version=4&token=${mytoken}`
+      );
+      console.log(response.data.response.rows[0]);
+      setPublisherData(response.data.response.rows[0]);
+    } catch (err) {
+      console.log("Error fetching publisher data:", err);
+    }
+  };
 
   useEffect(() => {
     const storedToken = localStorage.getItem("session_token");
-    
     const storedAccountType = localStorage.getItem("accountType");
 
     if (storedToken) {
@@ -42,9 +56,10 @@ export const AuthProvider = ({ children }: Props) => {
       setToken(storedToken);
       setAccountType(storedAccountType || undefined);
       setIsLogin(true);
+      fetchData(storedToken); 
     }
-    setInitializing(false);
-  }, []);
+    setInitializing(false); 
+  }, []); 
 
   const login = (token: string, accountType: string) => {
     console.log("Logging in with account type:", accountType);
@@ -53,6 +68,7 @@ export const AuthProvider = ({ children }: Props) => {
     localStorage.setItem("session_token", token);
     localStorage.setItem("accountType", accountType);
     setIsLogin(true);
+    fetchData(token); // Fetch publisher data upon login
     router.push("/dashboard");
   };
 
@@ -63,6 +79,7 @@ export const AuthProvider = ({ children }: Props) => {
     setIsLogin(false);
     setToken(undefined);
     setAccountType(undefined);
+    setPublisherData(null); // Clear publisher data on logout
 
     if (currentAccountType === "Publisher") {
       router.push("/publisher/login");
@@ -73,7 +90,7 @@ export const AuthProvider = ({ children }: Props) => {
 
   return (
     <AuthContext.Provider
-      value={{ token, accountType, initializing, isLogin, login, logout }}
+      value={{ token, accountType, initializing, publisherData, isLogin, login, logout }}
     >
       {children}
     </AuthContext.Provider>

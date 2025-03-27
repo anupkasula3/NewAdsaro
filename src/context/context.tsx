@@ -10,11 +10,39 @@ import {
   ReactNode,
 } from "react";
 
+interface PublisherData {
+  id: number;
+  name: string;
+  timestamp: string;
+  email: string;
+  website: string;
+  address_apt: string;
+  address_city: string;
+  address_country: string;
+  address_state: string;
+  address_street: string;
+  address_zip: string;
+  balance: number;
+  company: string;
+  hide_notifications: boolean;
+  login: string;
+  other_contacts: string;
+  password: string | null;
+  password_current: string | null;
+  password_repeat: string | null;
+  password_stats: string;
+  phone: string;
+  skype_id: string;
+  ui_theme: string;
+  website_descr: string;
+}
+
+
 interface AppContext {
   isLogin: boolean;
   token: string | undefined;
   accountType: string | undefined;
-  publisherData: any; 
+  publisherData?: PublisherData; 
   initializing: boolean;
   login: (token: string, accountType: string) => void;
   logout: () => void;
@@ -31,7 +59,8 @@ export const AuthProvider = ({ children }: Props) => {
   const [isLogin, setIsLogin] = useState(false);
   const [token, setToken] = useState<string | undefined>();
   const [accountType, setAccountType] = useState<string | undefined>();
-  const [publisherData, setPublisherData] = useState<any>(null); // Start with null to indicate no data yet
+  const [publisherData, setPublisherData] = useState<PublisherData>();
+
   const [initializing, setInitializing] = useState(true);
 
   const fetchData = async (mytoken: string) => {
@@ -79,7 +108,7 @@ export const AuthProvider = ({ children }: Props) => {
     setIsLogin(false);
     setToken(undefined);
     setAccountType(undefined);
-    setPublisherData(null); // Clear publisher data on logout
+    setPublisherData(undefined); 
 
     if (currentAccountType === "Publisher") {
       router.push("/publisher/login");

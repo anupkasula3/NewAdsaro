@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import {
-  ArrowUpCircleIcon,
+  
   BarChartIcon,
   
   ClipboardListIcon,
@@ -11,7 +11,7 @@ import {
   
   LayoutDashboardIcon,
   ListIcon,
-  SearchIcon,
+
   SettingsIcon,
   UsersIcon,
 } from "lucide-react"

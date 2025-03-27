@@ -13,7 +13,7 @@ import {
   ListIcon,
 
   SettingsIcon,
-  UsersIcon,
+
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"

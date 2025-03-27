@@ -1,15 +1,12 @@
 "use client"
 
 import {
-  MailIcon,
-  PlusCircleIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -33,7 +30,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
           <SidebarMenuItem className="flex items-center gap-2">
             {/* <SidebarMenuButton
               tooltip="Quick Create"
-              className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+              className="duration-200 ease-linear min-w-8 bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
             >
               <PlusCircleIcon />
               <span>Quick Create</span>
@@ -74,12 +71,12 @@ function NavMenuItem({ item }: { item: NavItem }) {
           <SidebarMenuButton tooltip={item.title}>
             {item.icon && <item.icon />}
             <span className="flex-1">{item.title}</span>
-            {open ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
+            {open ? <ChevronDownIcon className="w-4 h-4" /> : <ChevronRightIcon className="w-4 h-4" />}
           </SidebarMenuButton>
         </SidebarMenuItem>
 
         {open && (
-          <div className="ml-4 border-l pl-3 space-y-1">
+          <div className="pl-3 ml-4 space-y-1 border-l">
             {item.items.map((subItem) => (
               <NavMenuItem key={subItem.title} item={subItem} />
             ))}

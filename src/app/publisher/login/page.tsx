@@ -53,6 +53,7 @@ export default function SignupForm() {
       `https://panel.adsaro.com/publisher/login_service?action=login&login=${username}&password=${password}&captcha=${captchaValue}`
     );
     if (response.data.status == "OK") {
+      console.log("(response.data",response.data)
       if (auth?.login && typeof auth.login === "function") {
         auth.login(response.data.authToken,"Publisher"); 
       } else {
@@ -90,10 +91,10 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="pt-5 flex items-center py-14 bg-white text-zinc-900">
-      <section className="flex mx-auto justify-center items-center  px-4">
-        <div className="w-full  bg-white shadow-lg rounded-2xl p-8">
-          {/* <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+    <div className="flex items-center pt-5 bg-white py-14 text-zinc-900">
+      <section className="flex items-center justify-center px-4 mx-auto">
+        <div className="w-full p-8 bg-white shadow-lg rounded-2xl">
+          {/* <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">
               Log In
             </h2> */}
           <div className="flex justify-center mx-auto ">
@@ -104,7 +105,7 @@ export default function SignupForm() {
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block mb-2 font-medium text-gray-700">
                 Username
               </label>
               <input
@@ -120,14 +121,14 @@ export default function SignupForm() {
                 placeholder="Enter your username"
               />
               {errors.username && (
-                <p className="text-sm text-red-500 mt-1">
+                <p className="mt-1 text-sm text-red-500">
                   {errors.username.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block mb-2 font-medium text-gray-700">
                 Password
               </label>
               <div className="relative">
@@ -159,7 +160,7 @@ export default function SignupForm() {
               onChange={handleCaptchaChange}
             />
              {errors.captcha && (
-                <p className="text-sm text-red-500 mt-1">
+                <p className="mt-1 text-sm text-red-500">
                   {errors.captcha.message}
                 </p>
               )}
@@ -171,7 +172,7 @@ export default function SignupForm() {
               Log In
             </button>
 
-            <div className="flex justify-between text-sm text-gray-600 mt-4">
+            <div className="flex justify-between mt-4 text-sm text-gray-600">
               <a href="#" className="hover:text-[#4f528e]">
                 Create an account
               </a>

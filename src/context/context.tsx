@@ -108,7 +108,6 @@ export const AuthProvider = ({ children }: Props) => {
     setToken(undefined);
     setAccountType(undefined);
     setPublisherData(undefined); 
-
     if (currentAccountType === "Publisher") {
       router.push("/publisher/login");
     } else {

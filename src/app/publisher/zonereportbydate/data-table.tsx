@@ -226,7 +226,7 @@ const mytoken = auth?.token;
 
 
 
-<div className="p-6 mt-10 bg-white rounded-lg shadow-md ">
+<div className="p-6  bg-white rounded-lg shadow-md ">
       <h2 className="mb-4 text-xl font-bold text-gray-700">Display Zone Reports by Country</h2>
 
       <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">

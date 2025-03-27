@@ -35,17 +35,57 @@ import {
 import axios from "axios"
 import { useAuth } from "@/context/context"
 
-
+// const data: Payment[] = [
+//   {
+//     id: "m5gr84i9",
+//     amount: 316,
+//     status: "success",
+//     email: "ken99@example.com",
+//   },
+//   {
+//     id: "3u1reuv4",
+//     amount: 242,
+//     status: "success",
+//     email: "Abe45@example.com",
+//   },
+//   {
+//     id: "derv1ws0",
+//     amount: 837,
+//     status: "processing",
+//     email: "Monserrat44@example.com",
+//   },
+//   {
+//     id: "5kma53ae",
+//     amount: 874,
+//     status: "success",
+//     email: "Silas22@example.com",
+//   },
+//   {
+//     id: "bhqecj4p",
+//     amount: 721,
+//     status: "failed",
+//     email: "carmella@example.com",
+//   },
+// ]
 
 interface BannerZoneData {
-  country: string
-  request: number
-  pub_pixel_impressions: number
-  pub_net_clicks: number
-  pub_clicks: number
+  id: number
+  date: string
+  type: string
+  status:string
+  paymentmethod:string
+  amount:string
+  description: string
+  comments: string
+
 }
 
-
+// export type Payment = {
+//   id: string
+//   amount: number
+//   status: "pending" | "processing" | "success" | "failed"
+//   email: string
+// }
 
 export const columns: ColumnDef<BannerZoneData>[] = [
   {
@@ -72,36 +112,46 @@ export const columns: ColumnDef<BannerZoneData>[] = [
   },
   
 
+
   {
-    accessorKey: "country",
+    accessorKey: "id",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Country
+          id
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("country")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("id")}</div>,
+  },
+
+
+  {
+    accessorKey: "date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          date
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("date")}</div>,
   },
 
   
-
   {
-    accessorKey: "request",
-    header: () => <div className="">Request</div>,
+    accessorKey: "type",
+    header: () => <div className="">Type</div>,
     cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("request")}</div>
-    },
-  },
-  {
-    accessorKey: "pub_pixel_impressions",
-    header: () => <div className="">Impressions</div>,
-    cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("pub_pixel_impressions")}</div>
+      return <div className="font-medium ">{row.getValue("type")}</div>
     },
   },
 
@@ -109,26 +159,43 @@ export const columns: ColumnDef<BannerZoneData>[] = [
 
 
   {
-    accessorKey: "pub_net_clicks",
-    header: () => <div className="">Gross Clicks</div>,
+    accessorKey: "status",
+    header: () => <div className=""> Status</div>,
     cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("pub_net_clicks")}</div>
+      return <div className="font-medium ">{row.getValue("status")}</div>
     },
   },
 
   {
-    accessorKey: "revenue",
-    header: () => <div className=""> Revenue</div>,
+    accessorKey: "paymentmethod",
+    header: () => <div className=""> 	
+Payment Method</div>,
     cell: ({ row }) => {
-      return <div className="font-medium ">No {row.getValue("revenue")}</div>
+      return <div className="font-medium ">{row.getValue("paymentmethod")}</div>
     },
   },
 
   {
-    accessorKey: "pub_clicks",
-    header: () => <div className="">Clicks ?</div>,
+    accessorKey: "amount",
+    header: () => <div className="">Amount</div>,
     cell: ({ row }) => {
-      return <div className="font-medium ">{row.getValue("pub_clicks")}</div>
+      return <div className="font-medium ">{row.getValue("amount")}</div>
+    },
+  },
+
+  {
+    accessorKey: "description",
+    header: () => <div className="">Description</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium ">{row.getValue("description")}</div>
+    },
+  },
+
+  {
+    accessorKey: "comments",
+    header: () => <div className="">Comments</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium ">{row.getValue("comments")}</div>
     },
   },
 
@@ -146,12 +213,11 @@ export function DataTableDemo() {
   const [fromDate, setFromDate] = React.useState("");
   const [toDate, setToDate] = React.useState("");
   
-  const auth = useAuth();
-const mytoken = auth?.token;
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
+  const auth = useAuth();
+const mytoken = auth?.token;
   const table = useReactTable({
     data,
     columns,
@@ -171,9 +237,7 @@ const mytoken = auth?.token;
     },
   })
 
-
-
-
+  console.log(mytoken, "aabishkar");
 
   const fetchData = async () => {
     if (!fromDate || !toDate || !mytoken) {
@@ -182,12 +246,11 @@ const mytoken = auth?.token;
     }
 
     try {
-      const url = `https://panel.adsaro.com/publisher/api/FeedReports/date?version=4&token=${mytoken}&filters=date:${fromDate}_${toDate}`;
+      const url = `https://panel.adsaro.com/publisher/api/Transactions/?version=4&token=${mytoken}&filters=date:${fromDate}_${toDate}`;
       console.log("Fetching:", url);
 
       const response = await axios.get(url);
-      const rowsArray = Object.values(response.data.response.list.rows || {}) as BannerZoneData[];
-
+      const rowsArray = Object.values(response.data.response.rows || {})as BannerZoneData[];
       setData(rowsArray);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -195,24 +258,21 @@ const mytoken = auth?.token;
   };
 
   // Optional: Run automatically when fromDate, toDate, and token are all set
-React.useEffect(() => {
+  React.useEffect(() => {
     if (mytoken && fromDate && toDate) {
       fetchData();
     }
   }, [mytoken, fromDate, toDate]);
-
+  
 
   return (
-
-    
     <div className="w-full">
 
 
 
 
-
 <div className="p-6  bg-white rounded-lg shadow-md ">
-      <h2 className="mb-4 text-xl font-bold text-gray-700">Filter Report by Country</h2>
+      <h2 className="mb-4 text-xl font-bold text-gray-700">Filter Report by Date</h2>
 
       <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
         <div>
@@ -249,20 +309,12 @@ React.useEffect(() => {
     </div>
 
 
-
-
-
-
-
-
-
-
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."
-          value={(table.getColumn("pub_pixel_impressions")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("date")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("pub_pixel_impressions")?.setFilterValue(event.target.value)
+            table.getColumn("date")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

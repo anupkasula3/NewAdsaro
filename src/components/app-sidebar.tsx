@@ -96,21 +96,36 @@ const data = {
 
 
 
+
+
+
+
+
     {
-      title: "Analytics",
-      url: "#",
+      title: "Payments",
       icon: BarChartIcon,
-    },
-    {
-      title: "Projects",
       url: "#",
+      items: [
+        {
+          title: "Payment Transactions",
+          url: "/publisher/paymenttranscation",
+        },
+        {
+          title: "Payment Information",
+          url: "#",
+        },
+      ],
+    },
+
+
+
+
+    {
+      title: "Referrals",
+      url: "/publisher/referrals",
       icon: FolderIcon,
     },
-    {
-      title: "Team",
-      url: "#",
-      icon: UsersIcon,
-    },
+   
   ],
   
   navSecondary: [

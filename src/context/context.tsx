@@ -100,7 +100,6 @@ export const AuthProvider = ({ children }: Props) => {
     fetchData(token); // Fetch publisher data upon login
     router.push("/dashboard");
   };
-
   const logout = () => {
     const currentAccountType = accountType; // Store before resetting state
     localStorage.removeItem("session_token");

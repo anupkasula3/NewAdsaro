@@ -71,6 +71,7 @@ export function DataTableDemo() {
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const columns: ColumnDef<BannerZoneData>[] = [
     {
@@ -142,7 +143,7 @@ export function DataTableDemo() {
       header: () => <div className="">Action</div>,
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original;
+        // const payment = row.original;
 
         return (
           <DropdownMenu>
@@ -154,13 +155,15 @@ export function DataTableDemo() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(payment.id)}
               >
                 Copy payment ID
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View customer</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => openBannerCodePopup(row.original)}>
+                Get Banner Code
+              </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -291,9 +294,36 @@ export function DataTableDemo() {
     }
   };
 
+  const openBannerCodePopup = (row: BannerZoneData) => {
+    // console.log("row"	,row);
+    const selectedSize = bannerList.find((b) => b.id === Number(row.placesize_id));
+    if (selectedSize) {
+      const { width, height } = selectedSize;
+      axios
+        .get(
+          `https://panel.adsaro.com/admin/api/banner_code?type=js_ext&size=${width}x${height}&id=${row.id}&version=4&userToken=1wDtEkEz2ykyOdyx`
+        )
+        .then((response) => {
+          setScript(response.data.response.code);
+          setIsPopupOpen(true);
+        });
+    }
+  };
+
   return (
     <div className="w-full p-5">
-      <div className="text-xl font-bold text-purple-600">Banner Zone</div>
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-xl font-bold text-purple-600">Banner Zone</div>
+        <div>
+          <button
+            className="flex items-center gap-2 px-4 py-2 text-white transition duration-500 ease-in-out bg-blue-500 border border-blue-500 rounded hover:text-blue-500 hover:bg-transparent"
+            onClick={openModal}
+          >
+            Add New Zone
+          </button>
+        </div>
+      </div>
+
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."
@@ -407,218 +437,254 @@ export function DataTableDemo() {
       </div>
 
       {/* add banner code */}
-      <div>
-        {/* Button to open modal */}
-        <div className="flex flex-wrap gap-4 mb-4">
-          <button
-            className="flex items-center gap-2 px-4 py-2 text-white transition duration-500 ease-in-out bg-blue-500 border border-blue-500 rounded hover:text-blue-500 hover:bg-transparent"
-            onClick={openModal}
-          >
-            Add New Zone
-          </button>
-        </div>
 
-        {/* Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="w-full max-w-lg p-4 bg-white rounded-lg shadow-lg">
-              <div className="flex items-center justify-between pb-2 mb-4 border-b">
-                <h2 className="text-xl font-bold">
-                  {currentStep === 1
-                    ? "Add New Banner Zone"
-                    : "Zone Successfully Created"}
-                </h2>
-                <button
-                  onClick={closeModal}
-                  className="text-xl text-red-500 hover:text-red-700"
-                >
-                  ✕
-                </button>
-              </div>
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-lg p-4 bg-white rounded-lg shadow-lg">
+            <div className="flex items-center justify-between pb-2 mb-4 border-b">
+              <h2 className="text-xl font-bold">
+                {currentStep === 1
+                  ? "Add New Banner Zone"
+                  : "Zone Successfully Created"}
+              </h2>
+              <button
+                onClick={closeModal}
+                className="text-xl text-red-500 hover:text-red-700"
+              >
+                ✕
+              </button>
+            </div>
 
-              <div className="max-h-[75vh] overflow-auto p-2">
-                {currentStep === 1 && (
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-                    {/* Zone Name */}
-                    <div>
-                      <Label className="block mb-1 text-sm">Zone Name</Label>
-                      <Input
-                        id="zoneName"
-                        type="text"
-                        className="w-full p-2 border rounded"
-                        {...register("zoneName", {
-                          required: "Zone Name is required",
-                        })}
-                      />
-                      {errors.zoneName && (
-                        <p className="mt-1 text-sm text-red-500">
-                          * {errors.zoneName.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Placement Size */}
-                    <div>
-                      <Label className="block mb-1 text-sm">
-                        {" "}
-                        Placement Size
-                      </Label>
-
-                      <select
-                        id="placementSize"
-                        className="w-full p-2 border rounded"
-                        {...register("placementSize", {
-                          required: "Placement size is required",
-                        })}
-                      >
-                        <option value="">Select Size</option>
-                        {bannerList.length > 0 ? (
-                          bannerList.map((banners) => (
-                            <option key={banners.id} value={banners.id}>
-                              {banners.width}×{banners.height}
-                            </option>
-                          ))
-                        ) : (
-                          <option disabled>Loading...</option>
-                        )}
-                      </select>
-                      {errors.placementSize && (
-                        <p className="mt-1 text-sm text-red-500">
-                          * {errors.placementSize.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Passback Ad Tag with Tooltip */}
-                    <div className="relative">
-                      <Label
-                        htmlFor="passbackAdTag"
-                        className="block mb-1 text-sm"
-                      >
-                        Passback Ad Tag{" "}
-                        <span
-                          className="text-gray-500 cursor-help"
-                          onMouseEnter={() => setTooltipVisible(true)}
-                          onMouseLeave={() => setTooltipVisible(false)}
-                        >
-                          ?
-                        </span>
-                      </Label>
-                      {tooltipVisible && (
-                        <div className="absolute z-10 p-2 mt-1 text-sm text-white bg-gray-800 rounded shadow w-72">
-                          Ad Tag that will be displayed if no banners are
-                          available
-                        </div>
-                      )}
-                      <Textarea
-                        id="passbackAdTag"
-                        rows={3}
-                        className="w-full p-2 border rounded"
-                        {...register("passbackAdTag")}
-                      />
-                      <p className="mt-1 text-sm text-gray-600">
-                        Available macros:{" "}
-                        <code>
-                          {`{subid}, {cachebuster}, {pub_zone}, {pub_uri}, {pub_domain}, {pub_redirect}, {pub_*}`}
-                        </code>
+            <div className="max-h-[75vh] overflow-auto p-2">
+              {currentStep === 1 && (
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                  {/* Zone Name */}
+                  <div>
+                    <Label className="block mb-1 text-sm">Zone Name</Label>
+                    <Input
+                      id="zoneName"
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      {...register("zoneName", {
+                        required: "Zone Name is required",
+                      })}
+                    />
+                    {errors.zoneName && (
+                      <p className="mt-1 text-sm text-red-500">
+                        * {errors.zoneName.message}
                       </p>
-                    </div>
+                    )}
+                  </div>
 
-                    {/* Passback URL */}
-                    <div>
-                      <Label className="block mb-1 text-sm">Passback URL</Label>
-                      <input
-                        id="passbackUrl"
-                        type="text"
-                        className="w-full p-2 border rounded"
-                        {...register("passbackUrl")}
-                      />
-                    </div>
+                  {/* Placement Size */}
+                  <div>
+                    <Label className="block mb-1 text-sm">
+                      {" "}
+                      Placement Size
+                    </Label>
 
-                    <button
-                      type="submit"
-                      className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                    <select
+                      id="placementSize"
+                      className="w-full p-2 border rounded"
+                      {...register("placementSize", {
+                        required: "Placement size is required",
+                      })}
                     >
-                      Save
-                    </button>
-                  </form>
-                )}
-
-                {/* Step 2 - Summary */}
-                {currentStep === 2 && addedZoneData && (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      closeModal();
-                    }}
-                    className="space-y-2"
-                  >
-                    
-
-                    <div className="space-y-2">
-                      <p>
-                        <strong>Zone Name:</strong> {addedZoneData.zoneName}
-                     
+                      <option value="">Select Size</option>
+                      {bannerList.length > 0 ? (
+                        bannerList.map((banners) => (
+                          <option key={banners.id} value={banners.id}>
+                            {banners.width}×{banners.height}
+                          </option>
+                        ))
+                      ) : (
+                        <option disabled>Loading...</option>
+                      )}
+                    </select>
+                    {errors.placementSize && (
+                      <p className="mt-1 text-sm text-red-500">
+                        * {errors.placementSize.message}
                       </p>
-                      <p>
-                        <strong>Placement Size:</strong>{" "}
-                        {
-                          bannerList.find(
-                            (b) => b.id === Number(addedZoneData.placementSize)
-                          )?.width
-                        }
-                        ×
-                        {
-                          bannerList.find(
-                            (b) => b.id === Number(addedZoneData.placementSize)
-                          )?.height
-                        }
-                      </p>
-                      <p>
-                        <strong>Passback URL:</strong>{" "}
-                        {addedZoneData.passbackUrl}
-                      </p>
-                    </div>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="block mb-1 font-semibold">Script</label>
-                      <div className="relative">
-                        <div className="flex items-center justify-between mb-1">
-                          <button
-                            type="button"
-                            className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
-                            onClick={() => {
-                              if (bannerscript) {
-                                navigator.clipboard.writeText(bannerscript);
-                                setCopied(true);
-                                setTimeout(() => setCopied(false), 2000);
-                              }
-                            }}
-                          >
-                            Copy
-                          </button>
-                          {copied && (
-                            <span className="ml-2 text-sm font-medium text-green-600 transition-opacity duration-300">
-                              Copied!
-                            </span>
-                          )}
-                        </div>
-                        <pre className="p-3 overflow-auto text-sm whitespace-pre-wrap border bg-gray-50 max-h-60">
-                          {bannerscript || "Loading..."}
-                        </pre>
+                  {/* Passback Ad Tag with Tooltip */}
+                  <div className="relative">
+                    <Label
+                      htmlFor="passbackAdTag"
+                      className="block mb-1 text-sm"
+                    >
+                      Passback Ad Tag{" "}
+                      <span
+                        className="text-gray-500 cursor-help"
+                        onMouseEnter={() => setTooltipVisible(true)}
+                        onMouseLeave={() => setTooltipVisible(false)}
+                      >
+                        ?
+                      </span>
+                    </Label>
+                    {tooltipVisible && (
+                      <div className="absolute z-10 p-2 mt-1 text-sm text-white bg-gray-800 rounded shadow w-72">
+                        Ad Tag that will be displayed if no banners are
+                        available
                       </div>
-                    </div>
+                    )}
+                    <Textarea
+                      id="passbackAdTag"
+                      rows={3}
+                      className="w-full p-2 border rounded"
+                      {...register("passbackAdTag")}
+                    />
+                    <p className="mt-1 text-sm text-gray-600">
+                      Available macros:{" "}
+                      <code>
+                        {`{subid}, {cachebuster}, {pub_zone}, {pub_uri}, {pub_domain}, {pub_redirect}, {pub_*}`}
+                      </code>
+                    </p>
+                  </div>
 
-                    <div className="flex justify-end">
-                      <Button type="submit">Done</Button>
+                  {/* Passback URL */}
+                  <div>
+                    <Label className="block mb-1 text-sm">Passback URL</Label>
+                    <input
+                      id="passbackUrl"
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      {...register("passbackUrl")}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                  >
+                    Save
+                  </button>
+                </form>
+              )}
+
+              {/* Step 2 - Summary */}
+              {currentStep === 2 && addedZoneData && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    closeModal();
+                  }}
+                  className="space-y-2"
+                >
+                  <div className="space-y-2">
+                    <p>
+                      <strong>Zone Name:</strong> {addedZoneData.zoneName}
+                    </p>
+                    <p>
+                      <strong>Placement Size:</strong>{" "}
+                      {
+                        bannerList.find(
+                          (b) => b.id === Number(addedZoneData.placementSize)
+                        )?.width
+                      }
+                      ×
+                      {
+                        bannerList.find(
+                          (b) => b.id === Number(addedZoneData.placementSize)
+                        )?.height
+                      }
+                    </p>
+                    <p>
+                      <strong>Passback URL:</strong> {addedZoneData.passbackUrl}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-semibold">Script</label>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-1">
+                        <button
+                          type="button"
+                          className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
+                          onClick={() => {
+                            if (bannerscript) {
+                              navigator.clipboard.writeText(bannerscript);
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 2000);
+                            }
+                          }}
+                        >
+                          Copy
+                        </button>
+                        {copied && (
+                          <span className="ml-2 text-sm font-medium text-green-600 transition-opacity duration-300">
+                            Copied!
+                          </span>
+                        )}
+                      </div>
+                      <pre className="p-3 overflow-auto text-sm whitespace-pre-wrap border bg-gray-50 max-h-60">
+                        {bannerscript || "Loading..."}
+                      </pre>
                     </div>
-                  </form>
-                )}
-              </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button type="submit">Done</Button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
-        )}
+        </div>
+      )}
+
+
+{isPopupOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-full max-w-lg p-4 bg-white rounded-lg shadow-lg">
+      <div className="flex items-center justify-between pb-2 mb-4 border-b">
+        <h2 className="text-xl font-bold">Banner Code</h2>
+        <button
+           onClick={() => setIsPopupOpen(false)}// Close the popup
+          className="text-xl text-red-500 hover:text-red-700"
+        >
+          ✕
+        </button>
       </div>
+
+      <div className="space-y-3">
+        <label className="block mb-1 font-semibold">Script</label>
+        <div className="relative">
+          <div className="flex items-center justify-between mb-1">
+            <button
+              type="button"
+              className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
+              onClick={() => {
+                if (bannerscript) {
+                  navigator.clipboard.writeText(bannerscript);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }
+              }}
+            >
+              Copy
+            </button>
+            {copied && (
+              <span className="ml-2 text-sm font-medium text-green-600 transition-opacity duration-300">
+                Copied!
+              </span>
+            )}
+          </div>
+          <pre className="p-3 overflow-auto text-sm whitespace-pre-wrap border bg-gray-50 max-h-60">
+            {bannerscript || "Loading..."}
+          </pre>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button   onClick={() => setIsPopupOpen(false)}>Close</Button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

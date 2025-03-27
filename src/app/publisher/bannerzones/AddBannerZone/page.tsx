@@ -1,13 +1,9 @@
-import { useAuth } from "@/context/context";
-import axios from "axios";
-import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+"use client";
 
-interface BannerSize {
-  id: number;
-  width: number;
-  height: number;
-}
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useAuth } from "@/context/context";
 
 interface FormData {
   zoneName: string;
@@ -16,20 +12,22 @@ interface FormData {
   passbackUrl: string;
 }
 
-interface AddBannerZoneProps {
-  fetchData: () => void;
-  bannerList: BannerSize[];
+
+interface BannerSize {
+  id: number;
+  width: number;
+  height: number;
 }
 
-export default function AddBannerZone({ fetchData, bannerList }: AddBannerZoneProps) {
+export default function AddBannerZone({ fetchBannerData, bannerList }: { fetchBannerData: any, bannerList: BannerSize[] }) {
   const auth = useAuth();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bannerscript, setScript] = useState("");
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [addedZoneData, setAddedZoneData] = useState<FormData | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -50,7 +48,7 @@ export default function AddBannerZone({ fetchData, bannerList }: AddBannerZonePr
     reset();
   };
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  const onSubmit: SubmitHandler<FormData> = useCallback(async (data) => {
     const mydata = {
       publisher_id: auth.publisherData?.id,
       passback_tag: data.passbackAdTag,
@@ -67,32 +65,26 @@ export default function AddBannerZone({ fetchData, bannerList }: AddBannerZonePr
       });
 
       const result = await response.json();
-      console.log("result", result.response.created);
       const createdId = result.response.created;
 
-     
-
-
       const selectedSize = bannerList.find(b => b.id === Number(data.placementSize));
-      const width = selectedSize?.width;
-      const height = selectedSize?.height;
+      if (selectedSize) {
+        const { width, height } = selectedSize;
 
-      if (width && height) {
-       const script= await axios.get(
+        const script = await axios.get(
           `https://panel.adsaro.com/admin/api/banner_code?type=js_ext&size=${width}x${height}&id=${createdId}&version=4&userToken=1wDtEkEz2ykyOdyx`
         );
         setScript(script.data.response.code);
-        console.log("script",script.data.response.code)
       }
 
-      fetchData();
+      await fetchBannerData();
       setAddedZoneData(data);
       setCurrentStep(2);
       reset();
     } catch (err) {
       console.error("Error submitting banner zone:", err);
     }
-  };
+  }, [auth.publisherData?.id, bannerList, fetchBannerData, reset]);
 
   return (
     <div>
@@ -255,35 +247,33 @@ export default function AddBannerZone({ fetchData, bannerList }: AddBannerZonePr
                   </div>
 
                   <div>
-  <label className="block mb-1 font-semibold">Script</label>
-  <div className="relative">
-    <div className="flex items-center justify-between mb-1">
-      <button
-        type="button"
-        className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
-        onClick={() => {
-          if (bannerscript) {
-            navigator.clipboard.writeText(bannerscript);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000); // Reset after 2s
-          }
-        }}
-      >
-        Copy
-      </button>
-      {copied && (
-        <span className="ml-2 text-sm font-medium text-green-600 transition-opacity duration-300">
-          Copied!
-        </span>
-      )}
-    </div>
-    <pre className="p-3 overflow-auto text-sm whitespace-pre-wrap border bg-gray-50 max-h-60">
-      {bannerscript ? bannerscript : "Loading.."}
-    </pre>
-  </div>
-</div>
-
-
+                    <label className="block mb-1 font-semibold">Script</label>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-1">
+                        <button
+                          type="button"
+                          className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
+                          onClick={() => {
+                            if (bannerscript) {
+                              navigator.clipboard.writeText(bannerscript);
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 2000);
+                            }
+                          }}
+                        >
+                          Copy
+                        </button>
+                        {copied && (
+                          <span className="ml-2 text-sm font-medium text-green-600 transition-opacity duration-300">
+                            Copied!
+                          </span>
+                        )}
+                      </div>
+                      <pre className="p-3 overflow-auto text-sm whitespace-pre-wrap border bg-gray-50 max-h-60">
+                        {bannerscript || "Loading..."}
+                      </pre>
+                    </div>
+                  </div>
 
                   <button
                     type="submit"

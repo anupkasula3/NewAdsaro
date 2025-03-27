@@ -558,6 +558,7 @@ export function DataTableDemo() {
                     <div className="space-y-2">
                       <p>
                         <strong>Zone Name:</strong> {addedZoneData.zoneName}
+                     
                       </p>
                       <p>
                         <strong>Placement Size:</strong>{" "}

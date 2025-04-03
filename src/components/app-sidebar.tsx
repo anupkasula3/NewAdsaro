@@ -13,7 +13,6 @@ import {
   ListIcon,
 
   SettingsIcon,
-
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -112,7 +111,7 @@ const data = {
         },
         {
           title: "Payment Information",
-          url: "#",
+          url: "/publisher/paymentinformation",
         },
       ],
     },

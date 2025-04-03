@@ -111,7 +111,7 @@ const data = {
         },
         {
           title: "Payment Information",
-          url: "#",
+          url: "/publisher/paymentinformation",
         },
       ],
     },
